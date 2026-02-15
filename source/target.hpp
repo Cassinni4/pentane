@@ -65,7 +65,7 @@ namespace util {
         return GAME_TARGET == PentaneTarget::CarsTheVideoGame
             || GAME_TARGET == PentaneTarget::CarsMaterNationalChampionship;
     }
-    constexpr bool other() {
+    constexpr bool nu2() {
         return GAME_TARGET == PentaneTarget::LegoTCS;
     }
 };
