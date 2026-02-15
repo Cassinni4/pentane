@@ -12,6 +12,8 @@
 #include "games/mn/file_system.hpp"
 #include "games/tvg/file_system.hpp"
 #include "games/2tvg/file_system.hpp"
+#include "games/di3/file_system.hpp"
+#include "games/tcs/file_system.hpp"
 #include "logger.hpp"
 #include "plugin_loader.hpp"
 #include "target.hpp"
@@ -41,6 +43,11 @@ auto get_running_game_from_module_timestamp() -> PentaneTarget {
 		return PentaneTarget::Cars3DrivenToWin;
 	case 0x61595FF7:
 		return PentaneTarget::ToyStory3;
+	case 0x56787393: // WinRT Version (Microsoft Store)
+	case 0x5851C5D1: // Steam Version (Gold)
+		return PentaneTarget::DisneyInfinity3Gold;
+	case 0x4AC4A20B: // LEGO Star Wars: The Complete Saga
+    	return PentaneTarget::LegoTCS;
 	default:
 		return PentaneTarget::Invalid;
 		break;
@@ -206,6 +213,12 @@ BOOL WINAPI DllMain(HINSTANCE instance_handle, DWORD reason, LPVOID reserved) {
 
 		// Redirects DoDbgPrint to the logger.
 		sunset::inst::jmp(reinterpret_cast<void*>(0x00ee6650), RedirectDbgPrint);
+#elif defined(PENTANE_GAME_TARGET_DI3G)
+		// LogFileAccess::install_at_ptr(0x00fa2ef0);
+		di3::fs::init();
+#elif defined(PENTANE_GAME_TARGET_TCS)
+		// TCS-Specific initialization.
+		tcs::fs::init();
 #endif
 	}
 	return TRUE;

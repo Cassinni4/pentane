@@ -37,9 +37,28 @@ void* BINK_GET_TRACK_ID;
 // Used by 2TVGA
 void* BINK_SET_PAN;
 
+// Used by DI3G
+void* BINK_START_ASYNC_THREAD;
+void* BINK_SET_OS_FILE_CALLBACKS;
+void* BINK_SET_WILL_LOOP;
+void* BINK_DO_FRAME_ASYNC;
+void* BINK_DO_FRAME_ASYNC_WAIT;
+void* BINK_OPEN_XAUDIO2;
+
+// TCS
+void* BINK_GET_REALTIME;
+
 void bink::replace_funcs() {
 	H_BINKW32 = LoadLibraryA("binkw32.dll");
+	if (H_BINKW32 == nullptr) {
+		H_BINKW32 = LoadLibraryA("bink2w32.dll");
+	}
+	if (H_BINKW32 == nullptr) {
+		H_BINKW32 = LoadLibraryA("bink2winrt_x86.uni10.dll");
+	}
+
 	if (H_BINKW32 != nullptr) {
+
 		BINK_CLOSE = GetProcAddress(H_BINKW32, "_BinkClose@4");
 		BINK_COPY_TO_BUFFER_RECT = GetProcAddress(H_BINKW32, "_BinkCopyToBufferRect@44");
 		BINK_DO_FRAME = GetProcAddress(H_BINKW32, "_BinkDoFrame@4");
@@ -66,6 +85,16 @@ void bink::replace_funcs() {
 		BINK_GET_TRACK_ID = GetProcAddress(H_BINKW32, "_BinkGetTrackID@8");
 
 		BINK_SET_PAN = GetProcAddress(H_BINKW32, "_BinkSetPan@12");
+
+		BINK_START_ASYNC_THREAD = GetProcAddress(H_BINKW32, "_BinkStartAsyncThread@8");
+		BINK_SET_OS_FILE_CALLBACKS = GetProcAddress(H_BINKW32, "_BinkSetOSFileCallbacks@16");
+		BINK_SET_WILL_LOOP = GetProcAddress(H_BINKW32, "_BinkSetWillLoop@8");
+		BINK_DO_FRAME_ASYNC = GetProcAddress(H_BINKW32, "_BinkDoFrameAsync@12");
+		BINK_DO_FRAME_ASYNC_WAIT = GetProcAddress(H_BINKW32, "_BinkDoFrameAsyncWait@8");
+
+		BINK_OPEN_XAUDIO2 = GetProcAddress(H_BINKW32, "_BinkOpenXAudio2@4");
+
+		BINK_GET_REALTIME = GetProcAddress(H_BINKW32, "_BinkGetRealtime@12");
 	}
 }
 
@@ -174,4 +203,33 @@ extern "C" __declspec(dllexport) __declspec(naked) void __stdcall BinkGetTrackID
 
 extern "C" __declspec(dllexport) __declspec(naked) void __stdcall BinkSetPan(BINK* bink, std::uint32_t track_id, std::int32_t pan) {
 	__asm jmp BINK_SET_PAN;
+}
+
+extern "C" __declspec(dllexport) __declspec(naked) std::int32_t __stdcall BinkStartAsyncThread(std::int32_t thread_num, void const* param) {
+	__asm jmp BINK_START_ASYNC_THREAD;
+}
+
+extern "C" __declspec(dllexport) __declspec(naked) void __stdcall BinkSetOSFileCallbacks(void* open, void* read, void* seek, void* close) {
+	__asm jmp BINK_SET_OS_FILE_CALLBACKS;
+}
+
+extern "C" __declspec(dllexport) __declspec(naked) void __stdcall BinkSetWillLoop(BINK* bink, std::int32_t onoff) {
+	__asm jmp BINK_SET_WILL_LOOP;
+}
+
+extern "C" __declspec(dllexport) __declspec(naked) std::int32_t __stdcall BinkDoFrameAsync(BINK* bink, std::int32_t thread1, std::int32_t thread2) {
+	__asm jmp BINK_DO_FRAME_ASYNC;
+}
+
+extern "C" __declspec(dllexport) __declspec(naked) std::int32_t __stdcall BinkDoFrameAsyncWait(BINK* bink, std::int32_t microseconds) {
+	__asm jmp BINK_DO_FRAME_ASYNC_WAIT;
+}
+
+extern "C" __declspec(dllexport) __declspec(naked) void* __stdcall BinkOpenXAudio2(std::int32_t unknown) {
+	__asm jmp BINK_OPEN_XAUDIO2;
+}
+
+extern "C" __declspec(dllexport) __declspec(naked) std::uint32_t __stdcall BinkGetRealtime(std::uint32_t a, std::uint32_t b, std::uint32_t c)
+{
+    __asm jmp BINK_GET_REALTIME;
 }

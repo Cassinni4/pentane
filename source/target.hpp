@@ -9,6 +9,8 @@ enum class PentaneTarget {
 	Cars2TheVideoGameArcade = 4,
 	Cars3DrivenToWin = 5,
     ToyStory3 = 6,
+    DisneyInfinity3Gold = 7,
+    LegoTCS = 8,
 };
 
 template <>
@@ -23,6 +25,8 @@ struct std::formatter<PentaneTarget> : std::formatter<std::string_view> {
         case PentaneTarget::Cars2TheVideoGameArcade: name = "Cars 2: Arcade"; break;
         case PentaneTarget::Cars3DrivenToWin: name = "Cars 3: Driven To Win"; break;
         case PentaneTarget::ToyStory3: name = "Toy Story 3"; break;
+        case PentaneTarget::DisneyInfinity3Gold: name = "Disney Infinity 3.0 Gold"; break;
+        case PentaneTarget::LegoTCS: name = "Lego Star Wars: The Complete Saga"; break;
         default: name = "Invalid"; break;
         }
         return std::formatter<std::string_view>::format(name, ctx);
@@ -41,6 +45,10 @@ constexpr PentaneTarget GAME_TARGET{ PentaneTarget::Cars2TheVideoGameArcade };
 constexpr PentaneTarget GAME_TARGET{ PentaneTarget::Cars3DrivenToWin };
 #elif defined(PENTANE_GAME_TARGET_TS3)
 constexpr PentaneTarget GAME_TARGET{ PentaneTarget::ToyStory3 };
+#elif defined(PENTANE_GAME_TARGET_DI3G)
+constexpr PentaneTarget GAME_TARGET{ PentaneTarget::DisneyInfinity3Gold };
+#elif defined(PENTANE_GAME_TARGET_TCS)
+constexpr PentaneTarget GAME_TARGET{ PentaneTarget::LegoTCS };
 #else
 #error "Please define a game target!"
 #endif
@@ -50,10 +58,14 @@ namespace util {
         return GAME_TARGET == PentaneTarget::Cars2TheVideoGame 
             || GAME_TARGET == PentaneTarget::Cars2TheVideoGameArcade
             || GAME_TARGET == PentaneTarget::Cars3DrivenToWin
-            || GAME_TARGET == PentaneTarget::ToyStory3;
+            || GAME_TARGET == PentaneTarget::ToyStory3
+            || GAME_TARGET == PentaneTarget::DisneyInfinity3Gold;
     }
     constexpr bool rhythm_racing() {
         return GAME_TARGET == PentaneTarget::CarsTheVideoGame
             || GAME_TARGET == PentaneTarget::CarsMaterNationalChampionship;
+    }
+    constexpr bool other() {
+        return GAME_TARGET == PentaneTarget::LegoTCS;
     }
 };
