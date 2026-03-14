@@ -11,6 +11,7 @@ enum class PentaneTarget {
     ToyStory3 = 6,
     DisneyInfinity3Gold = 7,
     LegoTCS = 8,
+    LegoBatman1 = 9,
 };
 
 template <>
@@ -27,6 +28,7 @@ struct std::formatter<PentaneTarget> : std::formatter<std::string_view> {
         case PentaneTarget::ToyStory3: name = "Toy Story 3"; break;
         case PentaneTarget::DisneyInfinity3Gold: name = "Disney Infinity 3.0 Gold"; break;
         case PentaneTarget::LegoTCS: name = "Lego Star Wars: The Complete Saga"; break;
+        case PentaneTarget::LegoBatman1: name = "Lego Batman: The Videogame"; break;
         default: name = "Invalid"; break;
         }
         return std::formatter<std::string_view>::format(name, ctx);
@@ -49,6 +51,8 @@ constexpr PentaneTarget GAME_TARGET{ PentaneTarget::ToyStory3 };
 constexpr PentaneTarget GAME_TARGET{ PentaneTarget::DisneyInfinity3Gold };
 #elif defined(PENTANE_GAME_TARGET_TCS)
 constexpr PentaneTarget GAME_TARGET{ PentaneTarget::LegoTCS };
+#elif defined(PENTANE_GAME_TARGET_LB1)
+constexpr PentaneTarget GAME_TARGET{ PentaneTarget::LegoBatman1 };
 #else
 #error "Please define a game target!"
 #endif
@@ -66,6 +70,7 @@ namespace util {
             || GAME_TARGET == PentaneTarget::CarsMaterNationalChampionship;
     }
     constexpr bool nu2() {
-        return GAME_TARGET == PentaneTarget::LegoTCS;
+        return GAME_TARGET == PentaneTarget::LegoTCS
+        return GAME_TARGET == PentaneTarget::LegoBatman1;
     }
 };

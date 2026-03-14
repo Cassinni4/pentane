@@ -14,6 +14,7 @@
 #include "games/2tvg/file_system.hpp"
 #include "games/di3/file_system.hpp"
 #include "games/tcs/file_system.hpp"
+#include "games/lb1/file_system.hpp"
 #include "logger.hpp"
 #include "plugin_loader.hpp"
 #include "target.hpp"
@@ -48,6 +49,8 @@ auto get_running_game_from_module_timestamp() -> PentaneTarget {
 		return PentaneTarget::DisneyInfinity3Gold;
 	case 0x4AC4A20B: // LEGO Star Wars: The Complete Saga
     	return PentaneTarget::LegoTCS;
+	case 0x6867B14D:
+		return PentaneTarget::LegoBatman1
 	default:
 		return PentaneTarget::Invalid;
 		break;
@@ -219,6 +222,9 @@ BOOL WINAPI DllMain(HINSTANCE instance_handle, DWORD reason, LPVOID reserved) {
 #elif defined(PENTANE_GAME_TARGET_TCS)
 		// TCS-Specific initialization.
 		tcs::fs::init();
+#elif defined(PENTANE_GAME_TARGET_LB1)
+		// lb1-Specific initialization.
+		lb1::fs::init();
 #endif
 	}
 	return TRUE;
