@@ -50,7 +50,7 @@ auto get_running_game_from_module_timestamp() -> PentaneTarget {
 	case 0x4AC4A20B: // LEGO Star Wars: The Complete Saga
     	return PentaneTarget::LegoTCS;
 	case 0x6867B14D:
-		return PentaneTarget::LegoBatman1
+		return PentaneTarget::LegoBatman1;
 	default:
 		return PentaneTarget::Invalid;
 		break;

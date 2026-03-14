@@ -71,6 +71,6 @@ namespace util {
     }
     constexpr bool nu2() {
         return GAME_TARGET == PentaneTarget::LegoTCS
-        return GAME_TARGET == PentaneTarget::LegoBatman1;
+        || GAME_TARGET == PentaneTarget::LegoBatman1;
     }
 };
