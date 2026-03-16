@@ -174,10 +174,10 @@ auto collect_and_validate_plugins(const std::filesystem::path& plugin_dir) -> st
             std::vector<std::filesystem::path> all_files{};
             for (const auto& entry : std::filesystem::directory_iterator(plugin_dir)) {
                 if (entry.is_regular_file()) {
-                    auto ext = entry.path().extension();
-                    if (ext != L".dll" && ext != L".asi") continue;
-                }
-                    all_files.push_back(entry.path());
+                    const auto ext = entry.path().extension();
+                    if (ext == L".dll" || ext == L".asi") {
+                        all_files.push_back(entry.path());
+                    }
                 }
             }
             for (const auto& full_path : all_files | std::views::reverse) {
