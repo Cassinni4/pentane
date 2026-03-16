@@ -170,17 +170,34 @@ auto check_dependencies(const util::SortedHashMap<PentaneUUID, ProcessedPlugin, 
 auto collect_and_validate_plugins(const std::filesystem::path& plugin_dir) -> std::vector<ProcessedPlugin> {
     util::SortedHashMap<PentaneUUID, ProcessedPlugin, PentaneUUIDHasher> processed_plugins{};
     if (std::filesystem::is_directory(plugin_dir)) {
-        std::vector<std::string> enabled_plugins = config::plugins_enabled();
-        // Iterate over the enabled plugins in *reverse* order, so that the lowest priority plugins' main functions are ran first.
-        for (const auto& plugin_file_name : enabled_plugins | std::views::reverse) {
-            if (!plugin_file_name.empty()) {
-                std::filesystem::path full_path = plugin_dir / plugin_file_name;
-                if (std::filesystem::is_regular_file(full_path)) {
-                    std::wstring full_path_string = full_path.native();
-                    process_candidate(processed_plugins, full_path_string, plugin_file_name);
+        if (config::all_plugins_enabled()) {
+            std::vector<std::filesystem::path> all_files{};
+            for (const auto& entry : std::filesystem::directory_iterator(plugin_dir)) {
+                if (entry.is_regular_file()) {
+                    auto ext = entry.path().extension();
+                    if (ext != L".dll" && ext != L".asi") continue;
                 }
-                else {
-                    LOG_LOCALIZED_STRING(MODULE_REJECTED_NOT_FOUND, plugin_file_name);
+                    all_files.push_back(entry.path());
+                }
+            }
+            for (const auto& full_path : all_files | std::views::reverse) {
+                std::wstring full_path_string = full_path.native();
+                std::string base_file_name = full_path.filename().string();
+                process_candidate(processed_plugins, full_path_string, base_file_name);
+            }
+        }
+        else {
+            std::vector<std::string> enabled_plugins = config::plugins_enabled();
+            for (const auto& plugin_file_name : enabled_plugins | std::views::reverse) {
+                if (!plugin_file_name.empty()) {
+                    std::filesystem::path full_path = plugin_dir / plugin_file_name;
+                    if (std::filesystem::is_regular_file(full_path)) {
+                        std::wstring full_path_string = full_path.native();
+                        process_candidate(processed_plugins, full_path_string, plugin_file_name);
+                    }
+                    else {
+                        LOG_LOCALIZED_STRING(MODULE_REJECTED_NOT_FOUND, plugin_file_name);
+                    }
                 }
             }
         }

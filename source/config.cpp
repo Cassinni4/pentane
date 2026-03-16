@@ -40,6 +40,7 @@ private:
 	bool enable_file_logging = true;
 	std::vector<std::string> enabled_mods;
 	std::vector<std::string> enabled_plugins;
+	bool enable_all_plugins = false;
 public:
 	auto read(const toml::table& tbl, std::vector<std::string_view>& errors) -> bool;
 	auto get_language() const -> PentaneLanguage;
@@ -47,6 +48,7 @@ public:
 	auto file_logging_enabled() const -> bool;
 	auto get_enabled_mods() const -> std::vector<std::string>;
 	auto get_enabled_plugins() const -> std::vector<std::string>;
+	auto all_plugins_enabled() const -> bool;
 };
 
 /*
@@ -152,6 +154,13 @@ auto GlobalConfig::read(const toml::table& tbl, std::vector<std::string_view>& e
 			should_load_plugins = config_node["enable_plugins"].as_boolean()->get();
 		}
 
+		if (!config_node.as_table()->contains("enable_all_plugins")) {
+			errors.push_back(localization::get_with_fallback(GLOBAL_CONFIG_CONFIG_MISSING_ENABLE_PLUGINS, language));
+		}
+		else {
+			enable_all_plugins = config_node["enable_all_plugins"].as_boolean()->get();
+		}
+
 		if (!config_node.as_table()->contains("enable_console_logging")) {
 			errors.push_back(localization::get_with_fallback(GLOBAL_CONFIG_CONFIG_MISSING_ENABLE_CONSOLE_LOGGING, language));
 		}
@@ -226,6 +235,10 @@ auto GlobalConfig::get_enabled_plugins() const -> std::vector<std::string> {
 	return enabled_plugins;
 }
 
+auto GlobalConfig::all_plugins_enabled() const -> bool {
+    return enable_all_plugins;
+}
+
 
 bool config::init_global(const std::filesystem::path& file_path, std::vector<std::string_view>& errors) {
 	auto guard = CONFIG.lock_mut();
@@ -256,4 +269,9 @@ std::vector<std::string> config::mods_enabled() {
 std::vector<std::string> config::plugins_enabled() {
 	const auto guard = CONFIG.lock();
 	return (*guard)->get_enabled_plugins();
+}
+
+bool config::all_plugins_enabled() {
+    const auto guard = CONFIG.lock();
+    return (*guard)->all_plugins_enabled();
 }
